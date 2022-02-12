@@ -1,6 +1,6 @@
 
 library(divDyn) #chargement es package pour la session en cours
-library(rstudioapi)
+library(this.path)
 
 options(scipen=999) 
 
@@ -59,7 +59,7 @@ binloess <- function(dataset,lissage = 0.09, stagetable) { #n?cessite que le dat
 ############Traitement des jeux de donn?es: lowess, adaptation aux time bins, cr?ation du env.csv####################
 #####################################################################################################################
 data(stages)
-setwd(dir = paste(substr(getSourceEditorContext()$path,1,40), "datasets/environmental_databases/", sep=""))
+setwd(dir = paste(dirname(this.dir()), "/datasets/environmental_databases/", sep=""))
 rosette <- read.csv("GTS.rosette.csv", sep=";", na.strings="",stringsAsFactors = FALSE)
 
 #import des csv
