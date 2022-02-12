@@ -1,4 +1,4 @@
-library(rstudioapi)
+library(this.path)
 
 scriptlist <- c("bivalvia",
                 "brachipoda",
@@ -12,7 +12,7 @@ scriptlist <- c("bivalvia",
 
 for (scr in scriptlist) {
   
-  taxdb_path <- paste(substr(getSourceEditorContext()$path,1,35), 
+  taxdb_path <- paste(dirname(this.dir()), 
                       "datasets/taxonomic_databases/",scr,"/", sep="")
   
   setwd(dir = taxdb_path) #set path
