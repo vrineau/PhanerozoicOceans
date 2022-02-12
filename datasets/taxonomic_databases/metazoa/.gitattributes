@@ -1,0 +1,4 @@
+/home/valentin/Bureau/SOM_scripts/datasets/taxonomic_databases/metazoa/marine[[:space:]]metazoans[[:space:]]-[[:space:]]pbdb_data.csv filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+marine[[:space:]]metazoans[[:space:]]-[[:space:]]pbdb_data.csv filter=lfs diff=lfs merge=lfs -text
