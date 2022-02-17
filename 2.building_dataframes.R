@@ -5,7 +5,8 @@
 ###
 ### Compute diversity, extinction rate, and origination rates time series according to the 
 ### "Diversity and turnover rates estimate" material and methods part and gather them with 
-### the environmental time series in a singe table.
+### the environmental time series in a singe table. Results are written in 
+### /datasets/taxonomic_databases.
 
 library(this.path)
 
