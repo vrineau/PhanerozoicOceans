@@ -1,7 +1,8 @@
 library(divDyn)
 library(bestNormalize)
 
-qsqs <- 0.8 #set quorum value for sqs subsampling
+#set quorum value for sqs subsampling
+qsqs <- 0.8 
 
 #divdyn dataframes
 data(stages)
@@ -44,15 +45,15 @@ colnames(sqsquorum)[1] <- "stg"
 #environmental datasets
 env_path <- paste(substr(getSourceEditorContext()$path,1,35), "datasets/environmental_databases/", sep="")
 
-T.scotese.dataset1    <- read.csv(paste(env_path,"T.scotese.dataset.csv", sep=""),sep = ",", na.strings = "", stringsAsFactors = FALSE) #taxonomic database
-C.ogg.dataset1        <- read.csv(paste(env_path,"C.ogg.dataset.csv", sep=""), sep = ",", na.strings = "NA", stringsAsFactors = FALSE) #taxonomic database
-S.macarthur.dataset1  <- read.csv(paste(env_path,"S.macarthur.dataset.csv", sep=""), sep = ",", na.strings = "", stringsAsFactors = FALSE) #taxonomic database
-Sf.paytan.dataset1    <- read.csv(paste(env_path,"Sf.paytan.dataset.csv", sep=""), sep = ",", na.strings = "", stringsAsFactors = FALSE) #taxonomic database
+T.scotese.dataset1    <- read.csv(paste(env_path,"T.scotese.dataset.csv", sep=""),sep = ",", na.strings = "", stringsAsFactors = FALSE) 
+C.ogg.dataset1        <- read.csv(paste(env_path,"C.ogg.dataset.csv", sep=""), sep = ",", na.strings = "NA", stringsAsFactors = FALSE) 
+S.macarthur.dataset1  <- read.csv(paste(env_path,"S.macarthur.dataset.csv", sep=""), sep = ",", na.strings = "", stringsAsFactors = FALSE) 
+Sf.prokoph.dataset1    <- read.csv(paste(env_path,"Sf.prokoph.dataset.csv", sep=""), sep = ",", na.strings = "", stringsAsFactors = FALSE) 
 
 colnames(C.ogg.dataset1)[2] <- "C.ogg"
 colnames(T.scotese.dataset1)[2] <- "T.scotese"
 colnames(S.macarthur.dataset1)[2] <- "S.macarthur"
-colnames(Sf.paytan.dataset1)[2] <- "Sf.paytan"
+colnames(Sf.prokoph.dataset1)[2] <- "Sf.prokoph"
 
 #merging
 non_log_env <- Reduce(function(x,y) merge(x,y,by = "stg", all.x = TRUE, all.y = FALSE),
@@ -60,7 +61,7 @@ non_log_env <- Reduce(function(x,y) merge(x,y,by = "stg", all.x = TRUE, all.y = 
                            T.scotese.dataset1, 
                            C.ogg.dataset1, 
                            S.macarthur.dataset1, 
-                           Sf.paytan.dataset1))
+                           Sf.prokoph.dataset1))
 
 #NA deletion
 widestts <- c()
@@ -79,20 +80,20 @@ non_log_env <- non_log_env[widestts,]
 
 #log
 env_detrend <- non_log_env
-env_detrend$divCSIB <- log(non_log_env$divCSIB) #log of divcSIB
+env_detrend$divCSIB <- log(non_log_env$divCSIB)
 env <- env_detrend
 
 #remove trend
 env$T.scotese[2:length(env$stg)]    <- diff(env_detrend$T.scotese, differences = 1)
 env$S.macarthur[2:length(env$stg)] <- diff(env_detrend$S.macarthur, differences = 1)
-env$Sf.paytan[3:length(env$stg)] <- diff(env_detrend$Sf.paytan, differences = 2)
+env$Sf.prokoph[3:length(env$stg)] <- diff(env_detrend$Sf.prokoph, differences = 2)
 env$C.ogg[2:length(env$stg)]    <- diff(env_detrend$C.ogg, differences = 1)
 
 #outlier deletion
 env$T.scotese[1] <- NA
 env$C.ogg[1] <- NA
 env$S.macarthur[1] <- NA
-env$Sf.paytan[1:2] <- NA
+env$Sf.prokoph[1:2] <- NA
 
 #ordernorm transformation and scaling
 for (j in 2:ncol(env)) {

@@ -1,7 +1,8 @@
 library(divDyn)
 library(bestNormalize)
 
-qsqs <- 0.7 #set quorum value for sqs subsampling
+#set quorum value for sqs subsampling
+qsqs <- 0.7 
 
 #divdyn dataframes
 data(stages)
@@ -16,7 +17,7 @@ taxdb <- read.delim("vrineau_2020-07-30_07-41-03 calcareous nanofossils all.csv"
 gstages_path <- paste(substr(getSourceEditorContext()$path,1,35), 
                       "datasets/environmental_databases/", sep="")
 gstages <- read.csv(paste(gstages_path,"gstages.micro.csv", sep=""),
-                    sep = ",", na.strings = "", stringsAsFactors = FALSE) #taxonomic database
+                    sep = ",", na.strings = "", stringsAsFactors = FALSE)
 
 names(taxdb)[2] <- "genus"
 names(taxdb)[19] <- "age"
@@ -54,20 +55,20 @@ env_path <- paste(substr(getSourceEditorContext()$path,1,35), "datasets/environm
 T.scotese.dataset1    <- read.csv(paste(env_path,"T.scotese.dataset.micro.csv", sep=""),sep = ",", na.strings = "", stringsAsFactors = FALSE)
 C.ogg.dataset1        <- read.csv(paste(env_path,"C.ogg.dataset.micro.csv", sep=""), sep = ",", na.strings = "", stringsAsFactors = FALSE)
 S.macarthur.dataset1  <- read.csv(paste(env_path,"S.macarthur.dataset.micro.csv", sep=""), sep = ",", na.strings = "", stringsAsFactors = FALSE)
-Sf.paytan.dataset1    <- read.csv(paste(env_path,"Sf.paytan.dataset.micro.csv", sep=""), sep = ",", na.strings = "", stringsAsFactors = FALSE)
+Sf.prokoph.dataset1    <- read.csv(paste(env_path,"Sf.prokoph.dataset.micro.csv", sep=""), sep = ",", na.strings = "", stringsAsFactors = FALSE)
 
 colnames(C.ogg.dataset1)[2] <- "C.veizer"
 colnames(T.scotese.dataset1)[2] <- "T.scotese"
 colnames(S.macarthur.dataset1)[2] <- "S.macarthur"
-colnames(Sf.paytan.dataset1)[2] <- "Sf.paytan"
+colnames(Sf.prokoph.dataset1)[2] <- "Sf.prokoph"
 
 #merging
-non_log_env <- Reduce(function(x,y) merge(x,y,by = "stg", all.x = TRUE, all.y = FALSE), #Il faut choisir LOESS ou non ici (5 ou 6)
+non_log_env <- Reduce(function(x,y) merge(x,y,by = "stg", all.x = TRUE, all.y = FALSE), 
                       list(sqsquorum[,c(1,13,28,29)],
                            T.scotese.dataset1, 
                            C.ogg.dataset1, 
                            S.macarthur.dataset1, 
-                           Sf.paytan.dataset1
+                           Sf.prokoph.dataset1
                            ))
 
 #NA deletion
@@ -94,7 +95,7 @@ env <- env_detrend
 env$T.scotese    <- c(NA,NA,diff(env_detrend$T.scotese, differences = 2))
 env$S.macarthur  <- c(NA,NA,diff(env_detrend$S.macarthur, differences = 2))
 env$C.veizer     <- c(NA,diff(env_detrend$C.veizer, differences = 1))
-env$Sf.paytan    <- c(NA,NA,diff(env_detrend$Sf.paytan, differences = 2))
+env$Sf.prokoph    <- c(NA,NA,diff(env_detrend$Sf.prokoph, differences = 2))
 
 mod <- loess(env_detrend$divCSIB  ~ env_detrend$stg, span = 0.1, degree = 2, 
              na.action = na.exclude)
