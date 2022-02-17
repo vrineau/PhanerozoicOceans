@@ -1,3 +1,12 @@
+### V. Rineau, J, Smyčka, D. Storch, Diversity-dependence is an ubiquitous phenomenon across phanerozoic oceans.
+### DATA 1.
+###
+### Data 1: script 4 - 4.convergent_cross_maping.R
+###
+### Compute convergent cross maping (CCM) analysis for each pair of variable with different lags. 
+### The procedure is given in Material and methods, part "Bivariate causality analyses using 
+### Convergent Cross-Mapping". Results are written in /datasets/taxonomic_databases.
+
 library(this.path)
 library(rEDM)
 
