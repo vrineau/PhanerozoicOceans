@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 18 11:45:02 2021
 
-@author: valentin
-"""
+### V. Rineau, J, Smyčka, D. Storch, Diversity-dependence is an ubiquitous phenomenon across phanerozoic oceans.
+### DATA 1.
+###
+### Data 1: script 6 - 6.Transfer_entropy.py
+###
+### Computes conditional transfer entropy estimation explained in material and methods part entitled 
+### "Conditional transfer entropy for testing drivers of turnover rates".
+### Results are written in /datasets/taxonomic_databases.
 
 from idtxl.multivariate_te import MultivariateTE
 from idtxl.data import Data
