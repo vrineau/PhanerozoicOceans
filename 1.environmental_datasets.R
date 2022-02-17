@@ -1,3 +1,12 @@
+### V. Rineau, J, Smyčka, D. Storch, Diversity-dependence is an ubiquitous phenomenon across phanerozoic oceans.
+### DATA 1.
+###
+### Data 1: script 1 - 1.environmental_datasets.R
+###
+### Build temperature, carbon, strontium and sulfur time series according to the 
+### material and methods part "Palaeoenvironmental surrogate datasets".  
+### Result tables are written in the /datasets/environmental_databases folder.
+
 
 library(divDyn) #chargement es package pour la session en cours
 library(this.path)
