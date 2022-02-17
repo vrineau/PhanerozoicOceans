@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Mar  2 10:39:34 2021
 
-@author: valentin
-"""
+### V. Rineau, J, Smyčka, D. Storch, Diversity-dependence is an ubiquitous phenomenon across phanerozoic oceans.
+### DATA 1.
+###
+### Data 1: script 5 - 5.ccm_networks.py
+###
+### Reproduces the Figure 1 of the paper following CCM analyses computed in script 4.
+
 
 from numpy import array
 import matplotlib as mpl
