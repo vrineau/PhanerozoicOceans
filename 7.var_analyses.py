@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 18 11:45:02 2021
 
-@author: valentin
-"""
+### V. Rineau, J, Smyčka, D. Storch, Diversity-dependence is an ubiquitous phenomenon across phanerozoic oceans.
+### DATA 1.
+###
+### Data 1: script 5 - 7.var_analyses.py
+###
+### Computes autoregressive vector modelling (VAR) explained in Material and methods, part
+### "Bivariate causality analyses using Convergent Cross-Mapping". 
+### Results are written in /datasets/taxonomic_databases.
 
 # Import classes
 import numpy as np
