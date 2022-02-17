@@ -1,3 +1,12 @@
+### V. Rineau, J, Smyčka, D. Storch, Diversity-dependence is an ubiquitous phenomenon across phanerozoic oceans.
+### DATA 1.
+###
+### Data 1: script 3 - 3.cross_correlations.R
+###
+### 3.cross_correlations.R - compute cross correlation for each pair of variable. Results are written in 
+### /datasets/taxonomic_databases.
+
+
 library(this.path)
 
 scriptlist <- c("bivalvia",
