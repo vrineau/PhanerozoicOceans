@@ -19,12 +19,15 @@ scriptlist <- c("bivalvia",
                 "radiolaria",
                 "coccolithophoridae")
 
+# Loop that load each env.R file from each folder placed in /datasets/taxonomic_databases
+# and performs pairwise cross correlation between all pairs of time series.
+
 for (scr in scriptlist) {
   
   taxdb_path <- paste(dirname(this.dir()), 
                       "datasets/taxonomic_databases/",scr,"/", sep="")
   
-  setwd(dir = taxdb_path) #set path
+  setwd(dir = taxdb_path) 
   
   load("savevar.RData")
 

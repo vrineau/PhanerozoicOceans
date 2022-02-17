@@ -7,9 +7,11 @@
 ### The procedure is given in Material and methods, part "Bivariate causality analyses using 
 ### Convergent Cross-Mapping". Results are written in /datasets/taxonomic_databases.
 
+# Load packages
 library(this.path)
 library(rEDM)
 
+# List of all taxa for script names
 scriptlist <- c("bivalvia",
                 "brachipoda",
                 "scleractinia",
@@ -20,6 +22,7 @@ scriptlist <- c("bivalvia",
                 "radiolaria",
                 "coccolithophoridae")
 
+# Empty vectors to store the values of informative time delays
 tpvaluesori <- data.frame(diversity=rep(NA, NROW(scriptlist)), 
                        temperature=rep(NA, NROW(scriptlist)), 
                        carbon=rep(NA, NROW(scriptlist)), 
@@ -29,8 +32,10 @@ rownames(tpvaluesori) <- scriptlist
 tpvaluesext <- tpvaluesori
 rownames(tpvaluesext) <- scriptlist
 
+# For each taxaset
 for (scr in scriptlist) {
   
+  # Change directory and load previous files
   taxdb_path <- paste(dirname(this.dir()), 
                       "datasets/taxonomic_databases/",scr,"/", sep="")
   
@@ -44,7 +49,7 @@ for (scr in scriptlist) {
   causalvars <- names(envsub)
   effectvars <- causalvars[1:3]
 
-  #simplex : best embedding dimension for ccm analyses #########################
+  # Compute best embedding dimension for CCM analyses using simplex projection
   
   simplex_out <- lapply(causalvars, function(var) {
     simplex(envsub[,var], E = 0:10)
@@ -62,7 +67,7 @@ for (scr in scriptlist) {
     df$E[which.max(df$rho)]
   })
 
-  #convergent cross-maping analyses#############################################
+  # Convergent cross-maping analyses
   
   ccm_rho_matrix <- matrix(NA, nrow = length(causalvars), ncol = length(effectvars), dimnames = list(causalvars, effectvars))
   ccm_rho_pvalues_matrix <- matrix(NA, nrow = length(causalvars), ncol = length(effectvars), dimnames = list(causalvars, effectvars))
@@ -75,10 +80,11 @@ for (scr in scriptlist) {
   
   par(mfrow = c(3, 3))
 
+  # Different ranges of time delays between Neptune Database datasets and Paleobiology Database datasets
   if (scr %in% c("prymnesiophycae","foraminifera","radiolaria",
-               "coccolithophoridae")) {tp = -15:0} else {tp = -5:0} #optimal delay (tp) values
+               "coccolithophoridae")) {tp = -15:0} else {tp = -5:0}
   
-  #test with several delay values
+  # Analyses for different time delay values
   for (i in 1:NROW(comb)) {
     vars <- c(comb[i,1], comb[i,2])
     params <- expand.grid(lib_column = vars, target_column = vars, tp = tp) # generate all combinations of lib_column, target_column, tp
@@ -103,7 +109,7 @@ for (scr in scriptlist) {
            " xmap ",comb[i,1])), 
            inset = 0.02, bty = "n", cex = 0.8)
     
-    #fill matrices
+    # Fill matrices with results
     ccm_rho_matrix[comb[i,1], comb[i,2]] <- max(output$rho[output$lib_column == comb[i,1]], 
                                                 na.rm=TRUE)
     ccm_tp_matrix[comb[i,1], comb[i,2]] <- output$tp[output$rho == ccm_rho_matrix[comb[i,1], 
@@ -122,22 +128,24 @@ for (scr in scriptlist) {
     
   }
   
-  #ccm analyses and significance test with surrogate data
+  # First significance tests using surrogate time series
   for (i in 1:NROW(comb)) {
   
-    out_temp <- ccm(envsub, E = best_E[comb[i,1]], lib_column = comb[i,1], #ccm
+    out_temp <- ccm(envsub, E = best_E[comb[i,1]], lib_column = comb[i,1], 
                       target_column = comb[i,2], lib_sizes = NROW(envsub), 
                       tp = ccm_tp_matrix[comb[i,1], comb[i,2]], 
                       replace = FALSE, silent = TRUE)
       
-    ccm_rho_matrix[comb[i,1], comb[i,2]] <- out_temp$rho #fill matrix
+    # Fill matrix with results
+    ccm_rho_matrix[comb[i,1], comb[i,2]] <- out_temp$rho
       
-    #significance test
+    # Significance test
     num_surr <- 1000 #number of runs
     partialdat <- data.frame(envsub[comb[i,1]],envsub[comb[i,2]])
     names(partialdat) <-comb[i,]
     partialdat <- partialdat[complete.cases(partialdat), ]
-      
+    
+    # Build surrogate time series using Ebisuzaki method
     surr_a <- make_surrogate_data(partialdat[comb[i,2]], method = "ebisuzaki", 
                                     num_surr = num_surr) 
       
@@ -151,25 +159,24 @@ for (scr in scriptlist) {
                                replace = FALSE, silent = TRUE)$rho
       }
       
-    #p-values computation
+    # P-values computation
     ccm_rho_pvalues_matrix[comb[i,1], comb[i,2]] <- (sum(ccm_rho_matrix[comb[i,1], 
                     comb[i,2]] < ccm_rho_surr) + 1) / (length(ccm_rho_surr) + 1)
       
   }
   
-  #convergence test
+  # Second significance tests using kendall correlation tests to assess convergence of the results
   for (i in 1:NROW(comb)) {
-    #cross-maps 
-    inv_xmap_no <- ccm(envsub, lib_column = comb[i,1], target_column = comb[i,2], #lib_column cause
-                       E = best_E[comb[i,1]], tp = ccm_tp_matrix[comb[i,1], comb[i,2]], silent = TRUE)                       #target_column consequence
+    inv_xmap_no <- ccm(envsub, lib_column = comb[i,1], target_column = comb[i,2], 
+                       E = best_E[comb[i,1]], tp = ccm_tp_matrix[comb[i,1], comb[i,2]], silent = TRUE) 
     
     no_xmap_inv <- ccm(envsub, lib_column = comb[i,2], target_column = comb[i,1], 
                        E = best_E[comb[i,2]], tp = ccm_tp_matrix[comb[i,1], comb[i,2]], silent = TRUE)
     
-    inv_xmap_no_means <- ccm_means(inv_xmap_no) #means for different library sizes
-    no_xmap_inv_means <- ccm_means(no_xmap_inv)#moyennes pour différentes library sizes
+    inv_xmap_no_means <- ccm_means(inv_xmap_no) # Means for different library sizes
+    no_xmap_inv_means <- ccm_means(no_xmap_inv)
     
-    #convergence test
+    # Convergence test
     kendallconv <- cor.test(inv_xmap_no_means$lib_size, pmax(0, inv_xmap_no_means$rho), method = "kendall")
     if (is.na(kendallconv$estimate) | kendallconv$estimate < 0) {ccm_rho_converg[comb[i,1], comb[i,2]] <- 0.99
     } else  {ccm_rho_converg[comb[i,1], comb[i,2]] <- kendallconv$p.value}
@@ -182,19 +189,27 @@ for (scr in scriptlist) {
     ccm_rho_ptot[i,j] <- max(ccm_rho_pvalues_matrix[i,j],ccm_rho_converg[i,j])
   }}
 
-  #save matrices
+  # Save results
+  # rho values used for '5.ccm_networks.py' to build causality networks
   write.table(ccm_rho_matrix,paste("rho_matrix.csv", sep = ""), 
               row.names = TRUE, quote=FALSE,sep=" ")
+
+  # Results of the first significance tests using surrogate time series
   write.table(ccm_rho_pvalues_matrix,paste("pval_matrix.csv", sep = ""), 
               row.names = TRUE, quote=FALSE,sep=" ")
+
+  # Results of the second significance tests using kendall correlation tests
   write.table(ccm_rho_converg,paste("converg_matrix.csv", sep = ""), 
               row.names = TRUE, quote=FALSE,sep=" ")
+
+  # Informative lags resulting from lagged CCM analyses
   write.table(ccm_tp_matrix,paste("tp_matrix.csv", sep = ""), 
               row.names = TRUE, quote=FALSE,sep=" ")
   
 }
 
-#change directory and save all tp values for TE analysis
+# Change directory and save all tp values for subsequent 
+# conditional transfer entropy analyses (script 6 named 6.Transfer_entropy.py)
 setwd("..")
 write.csv2(tpvaluesori,file="tpvaluesori.csv")
 write.csv2(tpvaluesext,file="tpvaluesext.csv")

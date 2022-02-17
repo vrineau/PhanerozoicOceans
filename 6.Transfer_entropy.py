@@ -10,6 +10,7 @@
 ### "Conditional transfer entropy for testing drivers of turnover rates".
 ### Results are written in /datasets/taxonomic_databases.
 
+# Load packages
 from idtxl.multivariate_te import MultivariateTE
 from idtxl.data import Data
 import matplotlib.pyplot as plt
@@ -17,6 +18,7 @@ import numpy as np
 import pandas
 import os
 
+# Change directory
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)),
              "datasets","taxonomic_databases"))
 
@@ -24,6 +26,7 @@ namefile = ["bivalvia","brachipoda","scleractinia", #list of folders
             "gasteropoda","metazoa","prymnesiophycae",
             "foraminifera","coccolithophoridae","radiolaria"]
 
+# Load files containing informative time delays
 ori_tp = pandas.read_csv("tpvaluesori.csv",delimiter=";")
 ext_tp = pandas.read_csv("tpvaluesext.csv",delimiter=";")
 
@@ -32,48 +35,48 @@ success = []
 result_table = []
 i = 0
 
-#load results object
+# Load results object
 while i != 8:
     result_table.append(pandas.DataFrame(0, columns = ['Omnibus test', 
                              'Diversity', 'Energy'], index = namefile))
     i += 1
 
-#for each taxonomic dataset
+# For each taxonomic dataset
 for folder in namefile: 
         
-    tp_index = -1 #index of the target variable (0: extinction, 1: origination)
+    tp_index = -1 # Index of the target variable (0: extinction, 1: origination)
     
-    #for extinction and origination as target for CTE analysis
+    # For extinction and origination as target for CTE analysis
     for tp in [ext_tp,ori_tp]:
         
         tp_index += 1
-        taxaindex = tp.index[tp["Unnamed: 0"] == folder][0] #tp row number
+        taxaindex = tp.index[tp["Unnamed: 0"] == folder][0] #time delay (tp) row number
         
-        #for each environmental variable
+        # For each environmental variable
         for c in [4,5,6,7]:
          
-            #load dataset
+            # Load dataset
             os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)),
              "datasets","taxonomic_databases",folder))
                             
             env = np.genfromtxt("env_dataframe.csv",delimiter=",", 
                                 skip_header=1,missing_values="NA",)
         
-            #sub-array without missing data
+            # Build new array without missing data
             num_rows, num_cols = env.shape
             envsub = env[1:num_rows,[1,2,3,c]]
             envsub = envsub[~np.isnan(envsub).any(axis=1)]
     
-            #conversion in idtxl data object
+            # Conversion into idtxl format
             data = Data(envsub, dim_order='sp', normalise=False)
     
-            conditionals = [] #conditioning variables for CTE analysis
+            # Stating conditioning variables for CTE analysis
+            conditionals = [] 
             num_rowssub, num_colssub = envsub.shape
-    
-                                        
-            #if informative delays from CCM exists, add them to the 
-            #conditioning set for CTE
-            for x in [0,3]: #source variable, diversity or environmental var.
+               
+            # If informative delays from CCM exists, add them to the 
+            # conditioning set for CTE
+            for x in [0,3]: #source variable, diversity or environmental variables
                 
                 if x == 0:
                     y = 1
@@ -84,14 +87,14 @@ for folder in namefile:
                     for lag in tp.iloc[taxaindex,y].split():
                         conditionals.append((x,-1*int(lag))) 
                             
-            #initialise analysis object and define settings
+            # Initialise analysis object and define settings
             if folder in namefile[0:5]:
                 maxlag = 5
             else:
                 maxlag = 15
             
             network_analysis = MultivariateTE()
-            settings = {'cmi_estimator': "JidtGaussianCMI", #to perform alayses
+            settings = {'cmi_estimator': "JidtGaussianCMI", #to perform analyses
                         #using the non-linear estimator, change JidtGaussianCMI
                         #by JidtKraskovCMI
                         'max_lag_sources': maxlag,
@@ -101,50 +104,51 @@ for folder in namefile:
             if conditionals:
                 settings['add_conditionals'] = conditionals
 
-            #run analysis
+            # Run analysis
             results = network_analysis.analyse_network(settings=settings, 
                    data=data, targets=[0,1,2]) #targets are div., ext., ori.
                     
-            #fill results table
+            # Fill table with results
             try:
                 tabnum = c-5
                 
-                if tp_index == 0: #ext
+                if tp_index == 0: # Extinction rates
                     results_dict = results.get_single_target(1, fdr=True)
                     
-                else: #ori
+                else: # Origination rates
                     results_dict = results.get_single_target(2, fdr=True)
                     tabnum += 4
                 
-                #remplissage
-                result_table[tabnum].iloc[taxaindex,0] = results_dict["omnibus_te"] #omnibus
+                # Fill
+                result_table[tabnum].iloc[taxaindex,0] = results_dict["omnibus_te"] # Omnibus test results
                 
                 sources = sorted(list(set([x[0] for x in results_dict["selected_vars_sources"]])))
                 
                 if 0 in sources:
-                    result_table[tabnum].iloc[taxaindex,1] = results_dict["te"][sources.index(0)] #diversity
+                    result_table[tabnum].iloc[taxaindex,1] = results_dict["te"][sources.index(0)] # Diversity
                 
                 if 3 in sources:
-                    result_table[tabnum].iloc[taxaindex,2] = results_dict["te"][sources.index(3)] #energy
+                    result_table[tabnum].iloc[taxaindex,2] = results_dict["te"][sources.index(3)] # Environmental variables
                 
-                result_table[tabnum].iloc[taxaindex,0] = results_dict["omnibus_te"] #energy
+                result_table[tabnum].iloc[taxaindex,0] = results_dict["omnibus_te"] 
                                 
             except:
                 pass
             
-            if results_dict['omnibus_sign']: #if omnibus TE
+            if results_dict['omnibus_sign']: #if there is an omnibus value
                 for restuple in results_dict['selected_vars_sources']:
-                    if restuple[0] == 0: #if diversity signal
+                    if restuple[0] == 0: # If diversity signal
                         success.append(folder)                        
                         successdict[folder] = results
                         break
-            
+
+# Build results table
 final_table = pandas.concat(result_table, axis=1)
 final_table.to_csv("CTE_results.csv")
-
 final_table[final_table < 0] = 0
-        
-#Omnibus histogram
+    
+# Build plots    
+# Omnibus histogram
 Omnibus_table = final_table["Omnibus test"]
 Omnibus_table = Omnibus_table.reindex(["prymnesiophycae", "coccolithophoridae", 
                                        "foraminifera", "radiolaria", 
@@ -152,8 +156,6 @@ Omnibus_table = Omnibus_table.reindex(["prymnesiophycae", "coccolithophoridae",
                                        "scleractinia", "metazoa"])
 Omnibus_table[Omnibus_table == np.inf] = 2
 Omnibus_table.plot.bar(legend=False)
-
-
 
 #CTE histogram
 fig, axes = plt.subplots(nrows=4, ncols=2)
@@ -186,7 +188,6 @@ for p in result_table:
 
 #Comparative histogram displaying mean of TE diversity-dependence of extinction
 #rate and origination rate with all environmental variables as conditioning variables
-
 truc = np.array([result_table[0],result_table[1],result_table[2],result_table[3]])
 truc[truc == np.inf] = 2
 meantable = truc.mean(axis=0)

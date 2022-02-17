@@ -20,25 +20,35 @@ scriptlist <- c("bivalvia",
                 "radiolaria",
                 "coccolithophoridae")
 
+# Loop that run each env.R file from each folder placed in /datasets/taxonomic_databases
+# The resulting tables are named 'env_dataframe.csv' and contain the following 
+# columns (each column is a detrended time series) :
+# * diversity
+# * extinction rates
+# * origination rates
+# * temperature
+# * carbon (Delta13C)
+# * strontium (86Sr/87Sr)
+# * sulfur (Delta34S)
+
 for (scr in scriptlist) {
-  
-  #dir(find_root(has_file("2.building_dataframes.R")))
-  
+    
   taxdb_path <- paste(dirname(this.dir()), 
                       "/datasets/taxonomic_databases/",scr,"/", sep="")
   
-  setwd(dir = taxdb_path) #set path
+  # Set path
+  setwd(dir = taxdb_path)
   
   ll <- parse(file = "env.R")
 
-  #R script loading
+  # R script loading
   for (i in seq_along(ll)) {
     tryCatch(eval(ll[[i]]), 
       error = function(e) message("catched error", as.character(e)))
     
   }
   
-  #cleaning
+  # Cleaning
   rm(list= ls()[!(ls() %in% c("scriptlist","scr"))])
 }
 
