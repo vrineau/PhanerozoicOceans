@@ -7,14 +7,13 @@
 ### material and methods part "Palaeoenvironmental surrogate datasets".  
 ### Result tables are written in the /datasets/environmental_databases folder.
 
-
-library(divDyn) #chargement es package pour la session en cours
+# Load packages
+library(divDyn)
 library(this.path)
 
 options(scipen=999) 
 
-#FONCTIONS################################################################################################
-
+# Function for converting ages from one Geological time scale to another
 tsconverter <- function(Ao,rosette,i,j) {
   #following Wei and Peleo-Alampay 1993
   column_ages_old <- rosette[i]
@@ -28,7 +27,8 @@ tsconverter <- function(Ao,rosette,i,j) {
   An
 }
 
-binloess <- function(dataset,lissage = 0.09, stagetable) { #n?cessite que le dataset ait une colonne mean et une colonne age
+# Loess smoothing and bin average (bins defined in stagetable)
+binloess <- function(dataset,lissage = 0.09, stagetable) {
   
   mid = dataset$age
   mod <- loess(dataset$mean ~ mid, data = dataset, span = lissage, degree = 2)
@@ -40,12 +40,12 @@ binloess <- function(dataset,lissage = 0.09, stagetable) { #n?cessite que le dat
   for (i in 1:length(dataset$age)) { #nombre de lignes
     for (t in 1:nrow(stagetable)) { #nombre de bins
       nulstg <- FALSE
-      if (dataset$age[i]<=stagetable$bottom[t] & dataset$age[i]>=stagetable$top[t]) { #si l'age est dans la bin
+      if (dataset$age[i]<=stagetable$bottom[t] & dataset$age[i]>=stagetable$top[t]) { # if age is in the bin
         stg[i] <- stagetable$stg[t] #ajout du stg
         nulstg <- TRUE
         break
       }
-      if (dataset$age[i]<=stagetable$bottom[nrow(stagetable)] & nulstg == FALSE) { #si inf?rieur au plus faible          stg[i] <- stages$stg[nrow(stages)] #ajout du stg
+      if (dataset$age[i]<=stagetable$bottom[nrow(stagetable)] & nulstg == FALSE) { # is lower is minimum
       }
     }
   }
@@ -64,62 +64,57 @@ binloess <- function(dataset,lissage = 0.09, stagetable) { #n?cessite que le dat
   
 }
 
-#####################################################################################################################
-############Traitement des jeux de donn?es: lowess, adaptation aux time bins, cr?ation du env.csv####################
-#####################################################################################################################
+# Load stages and mapping table, and change working directory
 data(stages)
 setwd(dir = paste(dirname(this.dir()), "/datasets/environmental_databases/", sep=""))
 rosette <- read.csv("GTS.rosette.csv", sep=";", na.strings="",stringsAsFactors = FALSE)
 
-#import des csv
+# Import raw csv files containing environmental time series
 C.ogg        <- read.csv("C.ogg.csv", sep=";", na.strings="",stringsAsFactors = FALSE)
-T.scotese     <- read.csv("T.scotese.csv", sep=";", na.strings="",stringsAsFactors = FALSE)
+T.scotese    <- read.csv("T.scotese.csv", sep=";", na.strings="",stringsAsFactors = FALSE)
 S.macarthur  <- read.csv("S.macarthur.csv", sep=";", na.strings="",stringsAsFactors = FALSE)
-Sf.paytan    <- read.csv("Sf.prokoph.csv", sep=";", na.strings="",stringsAsFactors = FALSE)
+Sf.prokoph   <- read.csv("Sf.prokoph.csv", sep=";", na.strings="",stringsAsFactors = FALSE)
 
 
-#standardisation des noms de colonnes ? extraire et nettoyage
+# Standardisation of column names - extraction and cleaning
 C.ogg0 <- na.omit(data.frame(age=as.numeric(as.character(gsub(",",".",C.ogg$age))), 
                              mean=as.numeric(as.character(gsub(",",".",C.ogg$d13C)))))
 T.scotese0 <- na.omit(data.frame(age=as.numeric(as.character(gsub(",",".",T.scotese$Age))), 
                                  mean=as.numeric(as.character(gsub(",",".",T.scotese$Mean)))))
 S.macarthur0 <- na.omit(data.frame(age=as.numeric(as.character(gsub(",",".",S.macarthur$age))), 
                                    mean=as.numeric(as.character(gsub(",",".",S.macarthur$Mean))))) 
-Sf.paytan0 <- na.omit(data.frame(age=as.numeric(as.character(gsub(",",".",Sf.paytan$Age..GTS2004.))), #GTS 2004->2012 ? convertir
-                                 mean=as.numeric(as.character(gsub(",",".",Sf.paytan$d34SSSS)))))
+Sf.prokoph0 <- na.omit(data.frame(age=as.numeric(as.character(gsub(",",".",Sf.prokoph$Age..GTS2004.))), 
+                                 mean=as.numeric(as.character(gsub(",",".",Sf.prokoph$d34SSSS)))))
 
-#tri par age
+# Sort by age
 C.ogg0 <- C.ogg0[order(C.ogg0$age),]
 T.scotese0 <- T.scotese0[order(T.scotese0$age),]
 S.macarthur0 <- S.macarthur0[order(S.macarthur0$age),]
-Sf.paytan0 <- Sf.paytan0[order(Sf.paytan0$age),]
+Sf.prokoph0 <- Sf.prokoph0[order(Sf.prokoph0$age),]
 
-#conversion des echelles de temps vers la plus r?cente (2016 ? cette date)
+# Convert absolute ages to the most recent Geological time Scale 
 S.macarthur0$age <- tsconverter(S.macarthur0$age,rosette,3,4)
-Sf.paytan0$age <- tsconverter(Sf.paytan0$age,rosette,2,4)
+Sf.prokoph0$age <- tsconverter(Sf.prokoph0$age,rosette,2,4)
 
 S.macarthur0 <- S.macarthur0[!is.na(S.macarthur0$age),]
-Sf.paytan0 <- Sf.paytan0[!is.na(Sf.paytan0$age),]
+Sf.prokoph0 <- Sf.prokoph0[!is.na(Sf.prokoph0$age),]
 
-#plot des courbes lissees par LOESS
+# Smoothing and bin averaging environmental time series following 
+# the geological time scale (Paleobiology Database datasets)
 C.ogg.dataset        <- binloess(C.ogg0,stages,lissage = 0.01) 
 T.scotese.dataset    <- binloess(T.scotese0,stages,lissage = 0.08)
 S.macarthur.dataset  <- binloess(S.macarthur0,stages,lissage = 0.05) 
-Sf.paytan.dataset    <- binloess(Sf.paytan0,stages,lissage = 0.08)
+Sf.prokoph.dataset    <- binloess(Sf.prokoph0,stages,lissage = 0.08)
 
 C.ogg.dataset$mean[44:50] <- NA
 
+# Save results for PBDB datasets
 write.csv(C.ogg.dataset,"C.ogg.dataset.csv", row.names = FALSE)
 write.csv(T.scotese.dataset,"T.scotese.dataset.csv", row.names = FALSE)
 write.csv(S.macarthur.dataset,"S.macarthur.dataset.csv", row.names = FALSE)
-write.csv(Sf.paytan.dataset,"Sf.paytan.dataset.csv", row.names = FALSE)
+write.csv(Sf.prokoph.dataset,"Sf.prokoph.dataset.csv", row.names = FALSE)
 
-
-#####################################################################################################################
-############Traitement des jeux de donn?es: lowess, adaptation aux time bins, cr?ation du env.csv####################
-#####################################################################################################################
-
-#construction de la stage table
+# Building the stage table for Neptune Database datasets
 bins <- 1
 xl <- seq(574,0,-bins) #temporal range of the analysis
 gstages <- data.frame(sys = NA, system = NA, series = NA, stage = NA, short = NA, bottom = xl, 
@@ -137,15 +132,18 @@ for (i in 1:nrow(gstages)) {
   }
 }
 
-#plot des courbes lissees par LOESS - INDICATIF, prise de d?cision dans le bloc suivant
+# Smoothing and bin averaging environmental time series 
+# with 1Myr time bins (Neptune Database datasets)
 C.ogg.dataset.micro        <- binloess(C.ogg0,gstages,lissage = 0.01) 
 T.scotese.dataset.micro    <- binloess(T.scotese0,gstages,lissage = 0.08)
 S.macarthur.dataset.micro  <- binloess(S.macarthur0,gstages,lissage = 0.01) 
-Sf.paytan.dataset.micro    <- binloess(Sf.paytan0,gstages,lissage = 0.05)
+Sf.prokoph.dataset.micro    <- binloess(Sf.prokoph0,gstages,lissage = 0.05)
 
+# Save results for Neptune Database datasets
 write.csv(C.ogg.dataset.micro,"C.ogg.dataset.micro.csv", row.names = FALSE)
 write.csv(T.scotese.dataset.micro,"T.scotese.dataset.micro.csv", row.names = FALSE)
 write.csv(S.macarthur.dataset.micro,"S.macarthur.dataset.micro.csv", row.names = FALSE)
-write.csv(Sf.paytan.dataset.micro,"Sf.paytan.dataset.micro.csv", row.names = FALSE)
+write.csv(Sf.prokoph.dataset.micro,"Sf.paytan.dataset.micro.csv", row.names = FALSE)
 
+# Save mapping table
 write.csv(gstages,"gstages.micro.csv", row.names = FALSE)
