@@ -1,3 +1,12 @@
+### V. Rineau, J, Smyčka, D. Storch, Diversity-dependence is an ubiquitous phenomenon across phanerozoic oceans.
+### DATA 1.
+###
+### Data 1: script 2 - 2.building_dataframes.R
+###
+### Compute diversity, extinction rate, and origination rates time series according to the 
+### "Diversity and turnover rates estimate" material and methods part and gather them with 
+### the environmental time series in a singe table.
+
 library(this.path)
 
 scriptlist <- c("bivalvia",
