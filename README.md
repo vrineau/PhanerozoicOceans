@@ -16,11 +16,7 @@ install.packages("bestNormalize")
 install.packages("this.path")
 ```
 
-Moreover, the script `4.convergent_cross_maping.R` requires a specific version of the rEDM package which can be downloaded through devtools. Devtools is installed with
-
-```
-install.packages("devtools")
-```
+Moreover, the script `4.convergent_cross_maping.R` requires a specific version of the rEDM package which can be downloaded through devtools ([install devtools on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-r-packages-using-devtools-on-ubuntu-16-04)).
 
 Then the following lines launch the installation of rEDM.
 
@@ -34,6 +30,8 @@ The Python 3 dependencies can be installed very simply in bash using the file `r
 ```
 pip install -r requirements.txt
 ```
+
+Finally, you will need to download and install IDTxl on github: https://github.com/pwollstadt/IDTxl ([see here](https://github.com/pwollstadt/IDTxl/wiki/Installation-and-Requirements)).
 
 ## Launch scripts
 
