@@ -12,6 +12,7 @@ Several packages are also required. For the R scripts, the following lines allow
 	
 ```
 install.packages("divDyn")
+install.packages("bestNormalize")
 install.packages("this.path")
 ```
 
