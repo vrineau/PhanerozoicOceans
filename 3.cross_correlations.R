@@ -24,7 +24,7 @@ scriptlist <- c("bivalvia",
 
 for (scr in scriptlist) {
   
-  taxdb_path <- paste(dirname(this.dir()), 
+  taxdb_path <- paste(this.dir(), 
                       "datasets/taxonomic_databases/",scr,"/", sep="")
   
   setwd(dir = taxdb_path) 
