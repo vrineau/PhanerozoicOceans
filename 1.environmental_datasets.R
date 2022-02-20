@@ -66,7 +66,7 @@ binloess <- function(dataset,lissage = 0.09, stagetable) {
 
 # Load stages and mapping table, and change working directory
 data(stages)
-setwd(dir = paste(dirname(this.dir()), "/datasets/environmental_databases/", sep=""))
+setwd(dir = paste(this.dir(), "/datasets/environmental_databases/", sep=""))
 rosette <- read.csv("GTS.rosette.csv", sep=";", na.strings="",stringsAsFactors = FALSE)
 
 # Import raw csv files containing environmental time series
