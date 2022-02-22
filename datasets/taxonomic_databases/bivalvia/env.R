@@ -1,3 +1,4 @@
+library(this.path)
 library(divDyn)
 library(bestNormalize)
 
@@ -43,7 +44,8 @@ sqsquorum <-subsample(taxdbnona, iter=500, q=qsqs, tax="genus", bin="stg",
 colnames(sqsquorum)[1] <- "stg"
 
 #environmental datasets
-env_path <- paste(substr(getSourceEditorContext()$path,1,35), "datasets/environmental_databases/", sep="")
+env_path <- paste(dirname(dirname(this.dir())),"/datasets/environmental_databases/",scr,"/", sep="")
+  
 
 T.scotese.dataset1    <- read.csv(paste(env_path,"T.scotese.dataset.csv", sep=""),sep = ",", na.strings = "", stringsAsFactors = FALSE) 
 C.ogg.dataset1        <- read.csv(paste(env_path,"C.ogg.dataset.csv", sep=""), sep = ",", na.strings = "NA", stringsAsFactors = FALSE) 
