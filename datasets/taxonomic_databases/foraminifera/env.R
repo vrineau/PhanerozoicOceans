@@ -1,3 +1,4 @@
+library(this.path)
 library(divDyn)
 library(bestNormalize)
 
