@@ -143,7 +143,7 @@ Sf.prokoph.dataset.micro    <- binloess(Sf.prokoph0,gstages,lissage = 0.05)
 write.csv(C.ogg.dataset.micro,"C.ogg.dataset.micro.csv", row.names = FALSE)
 write.csv(T.scotese.dataset.micro,"T.scotese.dataset.micro.csv", row.names = FALSE)
 write.csv(S.macarthur.dataset.micro,"S.macarthur.dataset.micro.csv", row.names = FALSE)
-write.csv(Sf.prokoph.dataset.micro,"Sf.paytan.dataset.micro.csv", row.names = FALSE)
+write.csv(Sf.prokoph.dataset.micro,"Sf.prokoph.dataset.micro.csv", row.names = FALSE)
 
 # Save mapping table
 write.csv(gstages,"gstages.micro.csv", row.names = FALSE)
