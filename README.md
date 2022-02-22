@@ -5,6 +5,7 @@ Data and materials from
 
 ## Installation
 
+This set of scripts has been tested on Ubuntu.
 
 The scripts requires the installation of R and Python 3.
 
