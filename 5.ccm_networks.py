@@ -104,6 +104,7 @@ pc.set_clim(vmin=0, vmax=maxcolor)
 plt.colorbar(pc)    
 
 # Save and show
+os.chdir(main_folder)
 plt.savefig("ccm.pdf")
 plt.show()
 
