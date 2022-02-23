@@ -32,7 +32,8 @@ Python dependencies can be easily installed via a terminal using the pip command
 pip install -r requirements.txt
 ```
 
-Finally, you will need to download and install IDTxl and its dependecies from github: https://github.com/pwollstadt/IDTxl.
+Finally, you will need to download and install IDTxl and its dependecies from github: https://github.com/pwollstadt/IDTxl. 
+IDTxl requires several packages and Java to work properly: https://github.com/pwollstadt/IDTxl/wiki/Installation-and-Requirements.
 
 ## Launch scripts
 
