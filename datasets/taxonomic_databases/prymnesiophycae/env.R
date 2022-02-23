@@ -51,7 +51,7 @@ sqsquorum <-subsample(taxdb, iter=500, q=qsqs, tax="genus", bin="stg",
 colnames(sqsquorum)[1] <- "stg"
 
 #environmental datasets
-env_path <- paste(this.dir(),"/datasets/environmental_databases/" sep="")
+env_path <- paste(this.dir(),"/datasets/environmental_databases/", sep="")
 
 T.scotese.dataset1    <- read.csv(paste(env_path,"T.scotese.dataset.micro.csv", sep=""),sep = ",", na.strings = "", stringsAsFactors = FALSE)
 C.ogg.dataset1        <- read.csv(paste(env_path,"C.ogg.dataset.micro.csv", sep=""), sep = ",", na.strings = "", stringsAsFactors = FALSE)
