@@ -17,7 +17,9 @@ install.packages("bestNormalize")
 install.packages("this.path")
 ```
 
-Moreover, the script `4.convergent_cross_maping.R` requires a specific version of the rEDM package which can be downloaded through devtools ([install devtools on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-r-packages-using-devtools-on-ubuntu-16-04)).
+The scripts have been tested with the following versions: divDyn 0.8.1, bestNormalize 1.8.2, this.path 0.5.0.
+
+Moreover, the script `4.convergent_cross_maping.R` requires a specific version of the rEDM package (0.7.5) which can be downloaded through devtools ([install devtools on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-r-packages-using-devtools-on-ubuntu-16-04)).
 
 Then the following lines launch the installation of rEDM.
 
