@@ -144,6 +144,7 @@ for folder in namefile:
                         break
 
 # Build results table
+os.chdir(main_folder)
 final_table = pandas.concat(result_table, axis=1)
 final_table.to_csv("CTE_results.csv")
 final_table[final_table < 0] = 0
