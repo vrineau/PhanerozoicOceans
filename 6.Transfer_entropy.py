@@ -42,6 +42,8 @@ while i != 8:
     i += 1
 
 # For each taxonomic dataset
+main_folder = os.path.dirname(os.path.abspath(__file__))
+
 for folder in namefile: 
         
     tp_index = -1 # Index of the target variable (0: extinction, 1: origination)
@@ -56,8 +58,7 @@ for folder in namefile:
         for c in [4,5,6,7]:
          
             # Load dataset
-            os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-             "datasets","taxonomic_databases",folder))
+            os.chdir(os.path.join(main_folder,folder))
                             
             env = np.genfromtxt("env_dataframe.csv",delimiter=",", 
                                 skip_header=1,missing_values="NA",)
