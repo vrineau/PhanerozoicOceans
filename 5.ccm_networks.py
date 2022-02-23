@@ -104,7 +104,7 @@ pc.set_clim(vmin=0, vmax=maxcolor)
 plt.colorbar(pc)    
 
 # Save and show
-os.chdir(main_folder)
+os.chdir(os.path.join(main_folder,"datasets","taxonomic_databases"))
 plt.savefig("ccm.pdf")
 plt.show()
 
