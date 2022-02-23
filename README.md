@@ -1,5 +1,4 @@
 # PhanerozoicOceans
-[![DOI](https://zenodo.org/badge/455603679.svg)](https://zenodo.org/badge/latestdoi/455603679)
 
 Data and materials from 
 
