@@ -27,11 +27,13 @@ fig = plt.figure(figsize=(10,13)) # x inch * y inch
 coord = [(0, 0),(0, 1),(0, 2),(1, 0),(1, 1),(1, 2), 
          (2, 0),(2, 1),(2, 2),(3, 0),(3, 1),(3, 2)]
 
+main_folder = os.path.dirname(os.path.abspath(__file__))
+
 # For each taxonomic dataset
 for i in range(9): 
 
     # Load convergent-cross maping results
-    os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+    os.chdir(os.path.join(main_folder,
              "datasets","taxonomic_databases",namefile[i]))
 
     with open("rho_matrix.csv", "r") as tablefile:
@@ -72,7 +74,7 @@ for i in range(9):
            'C': array([-0.22252097, -0.97492786]),
            'S': array([ 0.62348963, -0.78183159])}
     
-    nx.draw_networkx_labels(G, pos, with_labels = True,font_weight='bold')
+    nx.draw_networkx_labels(G, pos, font_weight='bold')
     
     maxcolor = 0.7
     
